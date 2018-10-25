@@ -11,13 +11,17 @@ import org.springframework.web.client.RestTemplate;
 import java.awt.*;
 import java.io.*;
 import java.io.BufferedReader;
+import java.util.Objects;
 
 @SpringBootApplication
 public class AuthApplication {
 
 	public static void main(String[] args) {
 
-		String filePath = "/Users/satyamkumarjha/data200.csv";
+		int matched_no=0;
+		int not_matched_number = 0;
+		int not_found_number = 0;
+		String filePath = "/Users/satyamkumarjha/result1000.csv";
 		File file = new File(filePath);
 		BufferedReader reader;
 		try{
@@ -28,7 +32,7 @@ public class AuthApplication {
 
 			FileWriter outputfile = new FileWriter(file);
 			CSVWriter writer = new CSVWriter(outputfile);
-			String[] header = { "cat_id", "msq", "dd_vendor" };
+			String[] header = { "s.No","cat_id", "msq", "dd_vendor","match" };
 			writer.writeNext(header);
 			while (line != null)
 			{
@@ -36,14 +40,14 @@ public class AuthApplication {
 				line = reader.readLine();
 				String cat_id= line.substring(2, 10);
 				String msq= line.substring(21,line.length()-1);
-				//String cat_id="200-1487";
+				//String cat_id="574-7120";
 				String Url1 = "https://api.tesco.com/product/v3/products?catid=";
 				String Url2 = "&extendedFields=all&clientId=trn%3Atesco%3Acid%3Aed20e16f-e391-4e46-a3f0-f38af17fd9da%3Ad419a6a3-c27d-4915-9962-218bde9523fa";
 				String Url  = Url1+cat_id+Url2;
 
 
 				RestTemplate restTemplate = new RestTemplate();
-				String token_value="977d8055-658b-44f4-a1d4-2e20eb691e15";
+				String token_value="afd8e8b1-5c13-410c-bd47-d60488aa2daa";
 				String client_id_value = "trn:tesco:cid:ed20e16f-e391-4e46-a3f0-f38af17fd9da:d419a6a3-c27d-4915-9962-218bde9523fa";
 				//setting the headers
 				HttpHeaders headers = new HttpHeaders();
@@ -66,9 +70,15 @@ public class AuthApplication {
 				int position = ans.indexOf(match);
 				if(position == -1) {
 					i++;
+					not_found_number++;
 					System.out.println("dd_vendor_part_number Not present");
-					String[] data2 = { cat_id,msq, "dd_vendor_not present" };
+					String serial = String.valueOf(i);
+					String[] data2 = { serial,cat_id,msq, "dd_vendor_not present","-"};
 					writer.writeNext(data2);
+					if(i >= 1000)
+					{
+						break;
+					}
 					continue;
 
 				}
@@ -81,18 +91,34 @@ public class AuthApplication {
 //
 //					correct_case_number++;
 //				}
-				String[] data1 = { cat_id,msq, dd_vendor };
-				writer.writeNext(data1);
+				String serial = String.valueOf(i);
+				if(Objects.equals(msq,dd_vendor))
+				{
+					matched_no++;
+					String[] data1 = {serial,cat_id,msq, dd_vendor,"YES" };
+					writer.writeNext(data1);
+				}
+				else
+				{
+					String[] data11 = {serial,cat_id,msq, dd_vendor,"NO" };
+					writer.writeNext(data11);
+					not_matched_number++;
+				}
+
 				System.out.println(cat_id +" : dd_vendor = "+ dd_vendor + " msq = " + msq );
 
 				//line = reader.readLine();
-				if(i >= 100)
+				if(i >= 1000)
 				{
 					break;
 				}
 				i++;
 				System.out.println(correct_case_number);
 			}
+
+			System.out.println(matched_no+" "+not_found_number+"  "+not_matched_number);
+			String[] results={"Res:","Match = "+String.valueOf(matched_no),"Not match = "+String.valueOf(not_matched_number),"Not found = "+String.valueOf(not_found_number)};
+			writer.writeNext(results);
 			writer.close();
 		}
 		catch (IOException e) {
