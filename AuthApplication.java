@@ -25,7 +25,7 @@ public class AuthApplication {
 			String line = reader.readLine();
 			int i=0;
 			int correct_case_number = 0;
-
+			int test_case = 1000;
 			FileWriter outputfile = new FileWriter(file);
 			CSVWriter writer = new CSVWriter(outputfile);
 			String[] header = { "s.No","cat_id", "msq", "dd_vendor","match" };
@@ -67,7 +67,7 @@ public class AuthApplication {
 					String serial = String.valueOf(i);
 					String[] data2 = { serial,cat_id,msq, "dd_vendor_not present","-"};
 					writer.writeNext(data2);
-					if(i >= 10)
+					if(i >= test_case)
 					{
 						break;
 					}
@@ -94,7 +94,7 @@ public class AuthApplication {
 
 				System.out.println(cat_id +" : dd_vendor = "+ dd_vendor + " msq = " + msq );
 
-				if(i >= 10)
+				if(i >= test_case)
 				{
 					break;
 				}
