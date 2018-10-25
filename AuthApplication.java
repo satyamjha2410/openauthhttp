@@ -1,19 +1,15 @@
 package com.example.auth;
 
 import com.opencsv.CSVWriter;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.client.RestTemplate;
-
-import java.awt.*;
 import java.io.*;
 import java.io.BufferedReader;
 import java.util.Objects;
 
-@SpringBootApplication
+
 public class AuthApplication {
 
 	public static void main(String[] args) {
@@ -21,7 +17,7 @@ public class AuthApplication {
 		int matched_no=0;
 		int not_matched_number = 0;
 		int not_found_number = 0;
-		String filePath = "/Users/satyamkumarjha/result1000.csv";
+		String filePath = "/Users/satyamkumarjha/resultu1000.csv";
 		File file = new File(filePath);
 		BufferedReader reader;
 		try{
@@ -53,10 +49,6 @@ public class AuthApplication {
 				HttpHeaders headers = new HttpHeaders();
 				headers.add("Authorization", "Bearer " + token_value);
 				headers.add("client_id", client_id_value);
-
-				//headers.add("client_secret", client_secret_value);
-
-
 				HttpEntity entity = new HttpEntity(headers);
 
 				//executing the GET call
@@ -64,10 +56,10 @@ public class AuthApplication {
 
 				//retrieving the response
 				String ans = response.getBody();
-				//System.out.println("Response"+ ans);
 
 				String match = "dd_vendor_part_number";
 				int position = ans.indexOf(match);
+
 				if(position == -1) {
 					i++;
 					not_found_number++;
@@ -75,7 +67,7 @@ public class AuthApplication {
 					String serial = String.valueOf(i);
 					String[] data2 = { serial,cat_id,msq, "dd_vendor_not present","-"};
 					writer.writeNext(data2);
-					if(i >= 1000)
+					if(i >= 10)
 					{
 						break;
 					}
@@ -85,12 +77,7 @@ public class AuthApplication {
 				System.out.println(position);
 				String sub1 = ans.substring(position+64);
 				String dd_vendor = sub1.substring(0,sub1.indexOf('}')-1);
-				//String sub1=ans.substring(position+64, position+75);
-//				if(msq == dd_vendor)
-//				{
-//
-//					correct_case_number++;
-//				}
+
 				String serial = String.valueOf(i);
 				if(Objects.equals(msq,dd_vendor))
 				{
@@ -107,8 +94,7 @@ public class AuthApplication {
 
 				System.out.println(cat_id +" : dd_vendor = "+ dd_vendor + " msq = " + msq );
 
-				//line = reader.readLine();
-				if(i >= 1000)
+				if(i >= 10)
 				{
 					break;
 				}
@@ -124,9 +110,5 @@ public class AuthApplication {
 		catch (IOException e) {
 			e.printStackTrace();
 		}
-
-
-
-
 	}
 }
