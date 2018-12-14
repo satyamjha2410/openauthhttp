@@ -1,0 +1,49 @@
+package com.example.auth;
+
+import com.opencsv.CSVWriter;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.web.client.RestTemplate;
+import java.io.*;
+import java.io.BufferedReader;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Objects;
+import java.util.Set;
+
+
+public class AuthApplication {
+
+    public static void main(String[] args) {
+
+        int matched_no=0;
+        int not_matched_number = 0;
+        int not_found_number = 0;
+        HashSet<String> hash_Set = new HashSet<String>();
+        BufferedReader reader;
+        BufferedReader reader1;
+        try{
+            reader = new BufferedReader(new FileReader("/Users/satyamkumarjha/activeproducts.txt"));
+            String line = reader.readLine();
+            int i=0;
+            int correct_case_number = 0;
+            int test_case = 709;
+
+            while (line != null)
+            {
+                String cat_id = line.substring(0,8);
+                String msq= line.substring(9,line.length());
+                System.out.println(++i+" "+line+" cat_= "+cat_id+ " msq= "+msq);
+                line = reader.readLine();
+
+            }
+
+
+
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
